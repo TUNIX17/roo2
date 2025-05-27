@@ -1,0 +1,12 @@
+**Windows PowerShell Command Execution Guidelines:**
+• **Command Chaining:** When multiple commands need to be executed sequentially, and the next command should only run if the previous one succeeds, use separate `<execute_command>` calls or structure them in a PowerShell script block using semicolons `;` for unconditional chaining or `if ($LASTEXITCODE -eq 0) { ... }` for conditional chaining. **DO NOT use `&&`.**
+• **Directory Removal:** To remove a directory and its contents recursively and without prompting, use `Remove-Item -Recurse -Force <path_to_directory>`. **DO NOT use `rmdir /s /q` or `rm -rf`.**
+• **File Removal:** To remove a file, use `Remove-Item -Force <path_to_file>`. **DO NOT use `rm`.**
+• **Copying Files/Directories:** Use `Copy-Item -Path <source> -Destination <destination> -Recurse` (if needed).
+• **Moving Files/Directories:** Use `Move-Item -Path <source> -Destination <destination>`.
+• **Creating Directories:** Use `New-Item -ItemType Directory -Path <path_to_directory>`. **DO NOT use `mkdir -p`.** If you need to ensure parent directories exist, create them sequentially or use a more complex PowerShell snippet.
+• **Listing Files:** Use `Get-ChildItem <path>` (alias `ls` or `dir` often work but `Get-ChildItem` is the canonical cmdlet).
+• **Path Separators:** Always use backslashes `\` as path separators in commands intended for Windows PowerShell, or ensure paths are correctly quoted if they contain spaces.
+• **Quoting:** Be mindful of PowerShell quoting rules, especially for paths with spaces or special characters. Use single quotes `'...'` for literal strings and double quotes `"..."` for strings that might contain variable expansion (though direct variable expansion in commands given to Roocode should be rare).
+• **Error Checking:** After executing a command, if the agent needs to verify success, it should conceptually check `$LASTEXITCODE` (though it won't directly execute this check itself, it should be aware that a non-zero exit code means failure).
+• **Avoid Aliases in Critical Scripts:** While aliases like `ls`, `rm`, `mkdir` might work interactively, prefer the full cmdlet names (e.g., `Get-ChildItem`, `Remove-Item`, `New-Item`) in scripts or automated commands for clarity and robustness.
